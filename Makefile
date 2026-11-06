@@ -15,7 +15,7 @@ SOURCES  := source source/cjson libwiiinput/source
 DATA     :=
 INCLUDES := source source/cjson libwiiinput/include
 
-APP_VERSION ?= 0.1.1
+APP_VERSION ?= 0.1.2
 
 CFLAGS   = -g -O2 -Wall -Wno-unused-function $(MACHDEP) $(INCLUDE) \
            -DAPP_VERSION=\"$(APP_VERSION)\" -DHAVE_GCADAPTER -DHAVE_WPADQUEUE

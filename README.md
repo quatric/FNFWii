@@ -37,11 +37,13 @@ make
 
 ### Game data
 
-The game's art, music and charts are not included. Build them from the
+Release builds come pre-packaged with all game assets.
+
+If you are building from source, download and convert the assets from the
 [Funkin assets repository](https://github.com/FunkinCrew/funkin.assets) (needs Python 3 and Pillow):
 
 ```sh
-git clone https://github.com/FunkinCrew/funkin.assets.git
+git clone --depth 1 https://github.com/FunkinCrew/funkin.assets.git
 python3 tools/convert.py funkin.assets data_out
 make dist
 ```

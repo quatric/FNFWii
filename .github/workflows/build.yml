@@ -23,8 +23,10 @@ jobs:
         with:
           submodules: true
 
-      - name: Install portlibs
-        run: dkp-pacman -S --noconfirm --needed ppc-libvorbisidec ppc-libogg
+      - name: Install dependencies
+        run: |
+          dkp-pacman -S --noconfirm --needed ppc-libvorbisidec ppc-libogg
+          apt-get update -qq && apt-get install -y -qq git python3 python3-pil rsync zip ca-certificates >/dev/null
 
       - name: Version
         id: ver
@@ -35,17 +37,21 @@ jobs:
           esac
           echo "version=$v" >> "$GITHUB_OUTPUT"
 
-      - name: Build
+      - name: Build executable
         run: make -j"$(nproc)" APP_VERSION=${{ steps.ver.outputs.version }}
+
+      - name: Fetch and convert game assets
+        run: |
+          git clone --depth 1 https://github.com/FunkinCrew/funkin.assets.git
+          python3 tools/convert.py funkin.assets data_out
+          rm -rf funkin.assets
 
       - name: Package for the Homebrew Channel
         run: |
           make dist APP_VERSION=${{ steps.ver.outputs.version }}
-          mkdir -p dist/apps/FNFWii/tools
           cp README.md dist/apps/FNFWii/
-          cp tools/convert.py tools/fnfatlas.py dist/apps/FNFWii/tools/
-          apt-get update -qq && apt-get install -y -qq zip >/dev/null
           (cd dist && zip -qr ../FNFWii.zip apps)
+          rm -rf data_out
 
       - uses: actions/upload-artifact@v4
         with:
@@ -75,12 +81,6 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: true
           body: |
-            Extract FNFWii.zip to the root of your SD card (or USB drive).
-
-            The game's art, music and charts are not included. Build the data folder on a computer from the
-            [Funkin assets](https://github.com/FunkinCrew/funkin.assets) with `apps/FNFWii/tools/convert.py`
-            (Python 3 + Pillow) and copy it to `sd:/apps/FNFWii/data`:
-
-                python3 convert.py funkin.assets data
+            Extract `FNFWii.zip` to the root of your SD card (or USB drive) and launch FNFWii from the Homebrew Channel.
           files: |
             out/FNFWii.zip
