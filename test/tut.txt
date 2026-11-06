@@ -1,0 +1,8 @@
+play tutorial normal
+botplay
+shot 8 tut
+shot 74 end1
+shot 78 end2
+press 80 accept
+shot 83 after
+quit 84

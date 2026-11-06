@@ -1,0 +1,9 @@
+play tutorial normal
+shot 3 a
+press 4 pause
+press 5 up
+shot 5.5 b
+press 6 accept
+shot 7 c
+shot 9 d
+quit 10

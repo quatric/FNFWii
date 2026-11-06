@@ -1,0 +1,11 @@
+ref/
+build/
+build_*/
+data_out/
+*.elf
+*.dol
+*.map
+__pycache__/
+dist/
+test/out/
+.codesight/

@@ -1,0 +1,4 @@
+play south hard
+botplay
+shot 12 south
+quit 13

@@ -1,0 +1,21 @@
+scene story
+botplay
+press 1.8 down
+press 2.1 down
+press 2.4 down
+press 2.7 down
+press 3.0 down
+press 3.3 down
+press 3.6 down
+shot 4 w7
+press 4.5 accept
+seek 10 82000
+shot 12 ugh
+seek 22 136000
+shot 24 guns
+seek 34 120000
+shot 36 stress
+shot 42 results
+press 43 accept
+shot 46 back
+quit 47

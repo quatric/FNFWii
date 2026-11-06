@@ -1,0 +1,9 @@
+scene title
+shot 3 title_intro
+press 4 accept
+shot 6 title
+press 7 accept
+shot 9.5 mainmenu
+press 10 down
+shot 11 mainmenu_freeplay
+quit 12

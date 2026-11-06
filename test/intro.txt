@@ -1,0 +1,4 @@
+scene title
+shot 2.5 i1
+shot 5 i2
+quit 6

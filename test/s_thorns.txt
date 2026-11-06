@@ -1,0 +1,4 @@
+play thorns hard
+botplay
+shot 12 thorns
+quit 13

@@ -1,0 +1,4 @@
+play eggnog hard
+botplay
+shot 12 eggnog
+quit 13

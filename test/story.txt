@@ -1,0 +1,12 @@
+scene story
+shot 2 story
+press 3 down
+shot 4 story2
+press 5 up
+press 6 accept
+shot 9 story_play
+press 12 pause
+shot 13 pause
+press 14 down
+shot 15 pause2
+quit 16

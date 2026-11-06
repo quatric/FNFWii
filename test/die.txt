@@ -1,0 +1,6 @@
+play bopeebo normal
+shot 30 dead1
+shot 34 dead2
+press 36 accept
+shot 40 retry
+quit 41

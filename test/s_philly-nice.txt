@@ -1,0 +1,4 @@
+play philly-nice hard
+botplay
+shot 12 philly-nice
+quit 13

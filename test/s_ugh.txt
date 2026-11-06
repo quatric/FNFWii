@@ -1,0 +1,4 @@
+play ugh hard
+botplay
+shot 12 ugh
+quit 13

@@ -1,0 +1,4 @@
+play stress hard
+botplay
+shot 12 stress
+quit 13

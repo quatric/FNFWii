@@ -1,0 +1,8 @@
+scene freeplay
+shot 2 fp
+press 3 down
+press 3.5 down
+shot 4.5 fp2
+press 5 accept
+shot 9 fp_play
+quit 10

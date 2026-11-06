@@ -1,0 +1,4 @@
+play senpai hard
+botplay
+shot 12 senpai
+quit 13

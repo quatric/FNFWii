@@ -1,0 +1,7 @@
+play bopeebo normal
+botplay
+shot 3 p1
+shot 8 p2
+shot 15 p3
+shot 22 p4
+quit 24

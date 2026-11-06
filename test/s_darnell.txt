@@ -1,0 +1,4 @@
+play darnell hard
+botplay
+shot 12 darnell
+quit 13

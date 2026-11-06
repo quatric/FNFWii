@@ -1,0 +1,15 @@
+play bopeebo normal
+botplay
+shot 19.5 h00
+shot 19.75 h01
+shot 20.00 h02
+shot 20.25 h03
+shot 20.50 h04
+shot 20.75 h05
+shot 21.00 h06
+shot 21.25 h07
+shot 21.50 h08
+shot 21.75 h09
+shot 22.00 h10
+shot 22.25 h11
+quit 23
