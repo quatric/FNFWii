@@ -1286,7 +1286,7 @@ void play_update(float dt)
         update_pause(dt);
         return;
     }
-    if (in_pressed() & (ACT_PAUSE | ACT_HOME)) {
+    if (in_pressed() & ACT_PAUSE) {
         P.paused = true;
         P.pause_sel = 0;
         P.pause_alpha = 0;

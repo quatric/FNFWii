@@ -206,6 +206,8 @@ int main(int argc, char **argv)
         int pst = WIIUPDATE_Popup(in_raw_down(), &pop);
         bool popup_open = pst == WIIUPDATE_POPUP_OPEN;
         if (pst == WIIUPDATE_POPUP_EXIT) game_switch(SCENE_QUIT);
+        /* HOME leaves the game from any scene, like any other Wii app */
+        if (!popup_open && (in_pressed() & ACT_HOME)) game_switch(SCENE_QUIT);
         if (!popup_open && fade_dir <= 0 && pending == SCENE_NONE) scene_call(current, 1, dt);
         else if (!popup_open) scene_call(current, 1, 0);
         scene_call(current, 2, 0);
