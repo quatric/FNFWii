@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs FunkinWii inside Dolphin with a scripted autotest.txt and saves the
+# Runs FNFWii inside Dolphin with a scripted autotest.txt and saves the
 # screenshots it asks for as PNGs.
 #
 #   scripts/autotest.sh OUTDIR SCRIPT.txt
@@ -13,14 +13,14 @@
 #   shot T NAME                                  save OUTDIR/NAME.png
 #   quit T
 #
-# Needs: `make dist` (dist/apps/FunkinWii with data/), mtools and Dolphin.
+# Needs: `make dist` (dist/apps/FNFWii with data/), mtools and Dolphin.
 # DOLPHIN overrides Dolphin's path, GFX the video backend (Metal by default:
 # the game draws with GX, so the Null backend would leave the screen black).
 set -eu
 here=$(cd "$(dirname "$0")/.." && pwd)
 out=$1
 script=$2
-app="$here/dist/apps/FunkinWii"
+app="$here/dist/apps/FNFWii"
 dolphin=${DOLPHIN:-/Applications/Dolphin.app/Contents/MacOS/Dolphin}
 [ -f "$app/boot.dol" ] && [ -d "$app/data" ] || { echo "run make dist first" >&2; exit 1; }
 mkdir -p "$out"
@@ -43,7 +43,7 @@ if [ ! -f "$base" ] || [ ! -f "$stamp" ] || [ -n "$newest" ]; then
 fi
 sd="$work/sd.img"
 cp -c "$base" "$sd" 2>/dev/null || cp "$base" "$sd"
-mcopy -i "$sd" "$script" ::/apps/FunkinWii/autotest.txt
+mcopy -i "$sd" "$script" ::/apps/FNFWii/autotest.txt
 
 cat > "$work/user/Config/Dolphin.ini" <<EOF
 [General]
@@ -79,7 +79,7 @@ while [ $i -lt "$limit" ]; do
     sleep 1
     i=$((i + 1))
     kill -0 $pid 2>/dev/null || break
-    if mdir -i "$sd" ::/apps/FunkinWii/autotest.done >/dev/null 2>&1; then break; fi
+    if mdir -i "$sd" ::/apps/FNFWii/autotest.done >/dev/null 2>&1; then break; fi
 done
 sleep 1
 kill $pid 2>/dev/null || true          # Dolphin asks for a second signal before it stops
@@ -87,13 +87,13 @@ sleep 1; kill $pid 2>/dev/null || true
 sleep 2; kill -9 $pid 2>/dev/null || true
 wait $pid 2>/dev/null || true
 
-mcopy -o -i "$sd" ::/apps/FunkinWii/log.txt "$out/log.txt" 2>/dev/null || true
-mcopy -o -i "$sd" ::/apps/FunkinWii/shots/state.txt "$out/state.txt" 2>/dev/null || true
-for f in $(mdir -b -i "$sd" ::/apps/FunkinWii/shots 2>/dev/null | grep '\.yuv$' || true); do
+mcopy -o -i "$sd" ::/apps/FNFWii/log.txt "$out/log.txt" 2>/dev/null || true
+mcopy -o -i "$sd" ::/apps/FNFWii/shots/state.txt "$out/state.txt" 2>/dev/null || true
+for f in $(mdir -b -i "$sd" ::/apps/FNFWii/shots 2>/dev/null | grep '\.yuv$' || true); do
     n=$(basename "$f" .yuv)
     mcopy -o -i "$sd" "$f" "$work/$n.yuv"
     python3 -I "$here/scripts/yuv2png.py" "$work/$n.yuv" "$out/$n.png"
     echo "$out/$n.png"
 done
-mdir -i "$sd" ::/apps/FunkinWii/autotest.done >/dev/null 2>&1 && echo "finished" || echo "did not finish (timeout or crash)"
+mdir -i "$sd" ::/apps/FNFWii/autotest.done >/dev/null 2>&1 && echo "finished" || echo "did not finish (timeout or crash)"
 exit 0

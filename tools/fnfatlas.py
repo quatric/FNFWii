@@ -1,4 +1,4 @@
-"""Image and atlas handling for the FunkinWii asset converter.
+"""Image and atlas handling for the FNFWii asset converter.
 
 Every sprite source the game uses (Sparrow sheets, Packer sheets, Adobe
 Animate texture atlases and plain images) is turned into the same thing: a

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Converts the Friday Night Funkin' assets for FunkinWii.
+"""Converts the Friday Night Funkin' assets for FNFWii.
 
-The game's art and music are not redistributable, so FunkinWii ships
+The game's art and music are not redistributable, so FNFWii ships
 without them; this script builds its data folder from your own copy of the
 assets (https://github.com/FunkinCrew/Funkin.assets, or the assets/ folder
 of a desktop build).
 
     python3 tools/convert.py path/to/Funkin.assets out/
 
-Then copy out/ to the SD card as sd:/apps/FunkinWii/data/ (the folder
+Then copy out/ to the SD card as sd:/apps/FNFWii/data/ (the folder
 next to boot.dol).
 
 Needs Python 3.8+ and Pillow (pip install pillow).
@@ -550,7 +550,7 @@ def main():
     global A, OUT, SCALE
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("assets", help="Funkin.assets checkout (has preload/, shared/, songs/ ...)")
-    ap.add_argument("out", help="output folder (copy to sd:/apps/FunkinWii/data)")
+    ap.add_argument("out", help="output folder (copy to sd:/apps/FNFWii/data)")
     ap.add_argument("--scale", type=float, default=0.5, help="texture scale (default 0.5)")
     ap.add_argument("--jobs", type=int, default=os.cpu_count() or 2)
     ap.add_argument("--only", help="only build graphics whose output path contains this text")

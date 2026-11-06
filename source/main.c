@@ -1,4 +1,4 @@
-/* FunkinWii: Friday Night Funkin' for the Wii. */
+/* FNFWii: Friday Night Funkin' for the Wii. */
 #include <fat.h>
 #include <gccore.h>
 #include <input_wii.h>
@@ -137,12 +137,12 @@ static void missing_data_screen(void)
         if (in_pressed() & (ACT_HOME | ACT_ACCEPT | ACT_BACK) || power_off || reset_pressed) break;
         gfx_begin();
         gfx_rect(0, 0, GAME_W, GAME_H, rgba(20, 0, 30, 255));
-        text_draw("FunkinWii " APP_VERSION, GAME_W / 2, 140, 48, 0xffffffff, ALIGN_CENTER);
+        text_draw("FNFWii " APP_VERSION, GAME_W / 2, 140, 48, 0xffffffff, ALIGN_CENTER);
         text_draw("The game data was not found.", GAME_W / 2, 260, 32, 0xff8080ff, ALIGN_CENTER);
         text_draw("Build it on a computer from your copy of the game's assets:\n\n"
                   "  python3 tools/convert.py Funkin.assets data\n\n"
                   "and copy the data folder next to boot.dol\n"
-                  "(sd:/apps/FunkinWii/data).",
+                  "(sd:/apps/FNFWii/data).",
                   GAME_W / 2, 330, 24, 0xffffffff, ALIGN_CENTER);
         text_draw("Press A or HOME to exit.", GAME_W / 2, 600, 24, 0xffff66ff, ALIGN_CENTER);
         gfx_end();
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
 
     bool have_data = fs_init(argc > 0 ? argv[0] : NULL);
     log_open();
-    LOG("FunkinWii %s, root %s", APP_VERSION, fs_root());
+    LOG("FNFWii %s, root %s", APP_VERSION, fs_root());
     autotest_init();
     text_init();
     save_load();

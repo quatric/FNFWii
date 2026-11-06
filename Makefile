@@ -1,5 +1,5 @@
 #---------------------------------------------------------------------------------
-# FunkinWii
+# FNFWii
 #---------------------------------------------------------------------------------
 .SUFFIXES:
 
@@ -56,13 +56,13 @@ clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol dist
 
-# sd-card layout: dist/apps/FunkinWii/{boot.dol,meta.xml,icon.png,data/}
+# sd-card layout: dist/apps/FNFWii/{boot.dol,meta.xml,icon.png,data/}
 dist: $(BUILD)
-	@mkdir -p dist/apps/FunkinWii
-	@cp $(OUTPUT).dol dist/apps/FunkinWii/boot.dol
-	@sed "s/@VERSION@/$(APP_VERSION)/" apps/FunkinWii/meta.xml > dist/apps/FunkinWii/meta.xml
-	@[ ! -f apps/FunkinWii/icon.png ] || cp apps/FunkinWii/icon.png dist/apps/FunkinWii/
-	@[ ! -d data_out ] || rsync -a --delete data_out/ dist/apps/FunkinWii/data/
+	@mkdir -p dist/apps/FNFWii
+	@cp $(OUTPUT).dol dist/apps/FNFWii/boot.dol
+	@sed "s/@VERSION@/$(APP_VERSION)/" apps/FNFWii/meta.xml > dist/apps/FNFWii/meta.xml
+	@[ ! -f apps/FNFWii/icon.png ] || cp apps/FNFWii/icon.png dist/apps/FNFWii/
+	@[ ! -d data_out ] || rsync -a --delete data_out/ dist/apps/FNFWii/data/
 
 #---------------------------------------------------------------------------------
 else

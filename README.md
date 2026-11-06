@@ -1,4 +1,4 @@
-# FunkinWii
+# FNFWii
 
 A Wii port of [Friday Night Funkin'](https://github.com/FunkinCrew/Funkin), written in C on libogc.
 
@@ -30,8 +30,8 @@ on the computer.
 You need devkitPPC and libogc, plus the `ppc-libvorbisidec` and `ppc-libogg` portlibs.
 
 ```sh
-git clone --recursive https://github.com/quatric/FunkinWii.git
-cd FunkinWii
+git clone --recursive https://github.com/quatric/FNFWii.git
+cd FNFWii
 make
 ```
 
@@ -46,7 +46,7 @@ python3 tools/convert.py funkin.assets data_out
 make dist
 ```
 
-`make dist` puts everything in `dist/apps/FunkinWii` (about 800 MB with every song). Copy the
+`make dist` puts everything in `dist/apps/FNFWii` (about 800 MB with every song). Copy the
 `apps` folder to the root of an SD card or USB drive.
 
 ## Testing in Dolphin

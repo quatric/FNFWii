@@ -315,7 +315,7 @@ void mainmenu_draw(void)
     sprite_draw(&M.bg, 0, M.cam_y);
     sprite_draw(&M.magenta, 0, M.cam_y);
     for (int i = 0; i < MM_N; i++) sprite_draw(&M.items[i], 0, M.cam_y);
-    text_draw_outline("FunkinWii v" APP_VERSION, 5, GAME_H - 26, 20, 0xffffffff, 0x000000ff, 1.5f, ALIGN_LEFT);
+    text_draw_outline("FNFWii v" APP_VERSION, 5, GAME_H - 26, 20, 0xffffffff, 0x000000ff, 1.5f, ALIGN_LEFT);
     text_draw_outline(in_layout_hint(), GAME_W - 5, GAME_H - 26, 20, 0xffffffff, 0x000000ff, 1.5f, ALIGN_RIGHT);
 }
 

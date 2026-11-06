@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <app version="1">
-  <name>FunkinWii</name>
+  <name>FNFWii</name>
   <coder>quatric</coder>
   <version>@VERSION@</version>
   <short_description>Friday Night Funkin' for the Wii</short_description>

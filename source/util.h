@@ -7,14 +7,14 @@
 
 #include "cjson/cJSON.h"
 
-#define APP_NAME "FunkinWii"
+#define APP_NAME "FNFWii"
 #ifndef APP_VERSION
 #define APP_VERSION "0.1.0"
 #endif
 
 /* --- files: every game path is relative to the data folder --- */
 bool fs_init(const char *argv0);
-const char *fs_root(void);          /* e.g. "sd:/apps/FunkinWii" */
+const char *fs_root(void);          /* e.g. "sd:/apps/FNFWii" */
 const char *fs_path(const char *rel); /* data/<rel>; returns a static buffer (rotating) */
 const char *fs_app_path(const char *rel); /* <app folder>/<rel> (save file, logs) */
 bool fs_exists(const char *rel);
