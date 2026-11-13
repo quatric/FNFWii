@@ -21,6 +21,10 @@ typedef struct {
     OggVorbis_File vf;
     bool open, eof;
     int channels;
+    int src_rate;
+    double phase;      /* position of the next output frame, in source frames after `carry` */
+    bool primed;
+    s16 carry[2];
     float vol, vol_now;
 } track;
 
@@ -34,6 +38,7 @@ typedef struct {
 static track tracks[MUSIC_MAX_TRACKS];
 static int ntracks;
 static int rate = 44100;
+static int main_t; /* the track that sets timing: the first one that opened */
 static bool loop_music;
 static double length_ms;
 
@@ -88,7 +93,7 @@ static void voice_cb(s32 voice)
     }
 }
 
-static int read_track(track *t, s16 *out, int frames)
+static int read_raw(track *t, s16 *out, int frames)
 {
     /* Fills out with stereo frames; returns frames read (the rest is silence). */
     int got = 0;
@@ -116,6 +121,52 @@ static int read_track(track *t, s16 *out, int frames)
     return got;
 }
 
+static s16 *rs_src;
+
+/* Reads `frames` stereo frames at the mix rate, resampling (linear) tracks recorded at another rate. */
+static int read_track(track *t, s16 *out, int frames)
+{
+    if (t->src_rate == rate || t->src_rate <= 0) return read_raw(t, out, frames);
+    double ratio = (double)t->src_rate / rate;
+    if (!t->primed) {
+        s16 f[2];
+        if (read_raw(t, f, 1) < 1) {
+            memset(out, 0, frames * 4);
+            return 0;
+        }
+        t->carry[0] = f[0];
+        t->carry[1] = f[1];
+        t->phase = 0;
+        t->primed = true;
+    }
+    int need = (int)(t->phase + frames * ratio) + 2; /* entries in rs_src, carry included */
+    if (need > BUF_FRAMES * 3) need = BUF_FRAMES * 3;
+    rs_src[0] = t->carry[0];
+    rs_src[1] = t->carry[1];
+    int got = read_raw(t, rs_src + 2, need - 1);
+    if (got == 0) {
+        memset(out, 0, frames * 4);
+        return 0;
+    }
+    for (int i = 0; i < frames; i++) {
+        double pos = t->phase + i * ratio;
+        int idx = (int)pos;
+        if (idx > need - 2) idx = need - 2;
+        float k = (float)(pos - idx);
+        for (int c = 0; c < 2; c++) {
+            int a = rs_src[idx * 2 + c], b = rs_src[(idx + 1) * 2 + c];
+            out[i * 2 + c] = (s16)(a + (b - a) * k);
+        }
+    }
+    double np = t->phase + frames * ratio;
+    int used = (int)np;
+    if (used > need - 1) used = need - 1;
+    t->carry[0] = rs_src[used * 2];
+    t->carry[1] = rs_src[used * 2 + 1];
+    t->phase = np - used;
+    return frames;
+}
+
 static s16 *track_tmp;
 static int mix_acc[BUF_FRAMES * 2];
 
@@ -127,7 +178,7 @@ static void decode_one(mixbuf *b)
         track *tr = &tracks[t];
         if (!tr->open) continue;
         int got = read_track(tr, track_tmp, BUF_FRAMES);
-        if (t == 0) frames_main = got;
+        if (t == main_t) frames_main = got;
         float v0 = tr->vol_now, v1 = tr->vol;
         tr->vol_now = v1;
         if (v0 <= 0 && v1 <= 0) continue;
@@ -138,11 +189,12 @@ static void decode_one(mixbuf *b)
             mix_acc[i * 2 + 1] += (track_tmp[i * 2 + 1] * g) >> 8;
         }
     }
-    if (tracks[0].eof && loop_music) {
+    if (tracks[main_t].eof && loop_music) {
         for (int t = 0; t < ntracks; t++)
             if (tracks[t].open) {
                 ov_pcm_seek(&tracks[t].vf, 0);
                 tracks[t].eof = false;
+                tracks[t].primed = false;
             }
         /* the rest of this buffer stays silent; a seamless loop is not needed for menu music */
         frames_main = BUF_FRAMES;
@@ -156,7 +208,7 @@ static void decode_one(mixbuf *b)
     if (b->frames == 0) b->frames = 0;
     decoded_frames += b->frames;
     DCFlushRange(b->data, BUF_BYTES);
-    if (!loop_music && tracks[0].eof) decode_eof = true;
+    if (!loop_music && tracks[main_t].eof) decode_eof = true;
 }
 
 static void *decode_main(void *arg)
@@ -201,7 +253,8 @@ static void *decode_main(void *arg)
             }
         }
         LWP_MutexUnlock(music_lock);
-        if (!did) usleep(3000);
+        /* Always yield so a burst of decoding cannot starve the game thread (frame hitches). */
+        usleep(did ? 1000 : 3000);
     }
     return NULL;
 }
@@ -213,6 +266,7 @@ void audio_init(void)
     for (int i = 0; i < NBUF; i++) bufs[i].data = memalign(32, BUF_BYTES);
     decode_tmp = memalign(32, BUF_BYTES * 2);
     track_tmp = memalign(32, BUF_BYTES);
+    rs_src = memalign(32, BUF_BYTES * 3 + 64);
     LWP_MutexInit(&music_lock, false);
     thread_quit = false;
     LWP_CreateThread(&decode_thread, decode_main, NULL, NULL, 64 * 1024, 90);
@@ -248,6 +302,7 @@ void music_close(void)
     memset(tracks, 0, sizeof(tracks));
     ntracks = 0;
     paused = true;
+    main_t = 0;
     end_frame = 0;
     decoded_frames = 0;
     length_ms = 0;
@@ -271,23 +326,16 @@ bool music_open(const char *const *paths, int count, bool loop)
         }
         vorbis_info *vi = ov_info(&t->vf, -1);
         t->channels = vi->channels;
-        if (i == 0 || !any) rate = vi->rate;
-        if (i == 0) length_ms = ov_time_total(&t->vf, -1); /* Tremor: milliseconds */
+        t->src_rate = vi->rate;
+        if (!any) {
+            rate = vi->rate;
+            main_t = i;
+            length_ms = ov_time_total(&t->vf, -1); /* Tremor: milliseconds */
+        }
         t->open = true;
         any = true;
     }
     ntracks = count < MUSIC_MAX_TRACKS ? count : MUSIC_MAX_TRACKS;
-    if (!tracks[0].open) {
-        /* the timing follows track 0; promote the first open one */
-        for (int i = 1; i < ntracks; i++)
-            if (tracks[i].open) {
-                track tmp = tracks[0];
-                tracks[0] = tracks[i];
-                tracks[i] = tmp;
-                length_ms = ov_time_total(&tracks[0].vf, -1);
-                break;
-            }
-    }
     loop_music = loop;
     paused = true;
     end_frame = 0;
@@ -356,9 +404,10 @@ void music_seek_ms(double ms)
         if (tracks[i].open) {
             ov_time_seek(&tracks[i].vf, (ogg_int64_t)ms);
             tracks[i].eof = false;
+            tracks[i].primed = false;
         }
     u64 frame = (u64)(ms * rate / 1000.0);
-    if (tracks[0].open) frame = ov_pcm_tell(&tracks[0].vf);
+    if (tracks[main_t].open) frame = ov_pcm_tell(&tracks[main_t].vf);
     decoded_frames = frame;
     end_frame = frame;
     paused = was_paused;
